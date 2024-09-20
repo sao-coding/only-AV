@@ -81,17 +81,24 @@ export const GET = async (req: NextRequest) => {
     const page = await browser.newPage()
     await page.goto(url)
     const content = await page.content()
+    console.log({ content })
     const $ = cheerio.load(content)
     await browser.close()
-    const coverUrl = $("video").attr("poster")
+    // 獲取封面圖 video 標籤 屬性 poster
+    const coverUrl = $("#site-content video").attr("poster")
+    console.log({ coverUrl })
     const title = $(".info-header h4").text()
-    const scriptHtml = $("script").eq(9).html()
+    console.log({ title })
+    // const scriptHtml = $("script").eq(8).html()
+    // console.log({ scriptHtml })
+    // 獲取 div id site-content 底下 第二個 script
+    const scriptHtml = $("#site-content script").eq(1).html()
     // console.log({ scriptHtml })
     const hlsUrlMatch = scriptHtml && scriptHtml.match(/var hlsUrl = '(.+)';/)
     const vttUrlMatch = scriptHtml && scriptHtml.match(/var vttUrl = '(.+)';/)
     const hlsUrl = hlsUrlMatch && hlsUrlMatch[1]
     const vttUrl = vttUrlMatch && vttUrlMatch[1]
-
+    console.log({ coverUrl, title, hlsUrl, vttUrl })
     return { coverUrl, title, hlsUrl, vttUrl }
   }
 
